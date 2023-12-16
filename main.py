@@ -47,7 +47,6 @@ def read_item(item_id: int, q: Union[str, None] = None):
 # method used to create an item and save it to the database
 @app.post("/items")
 def create_item(recipe: dict):
-    user_table = "recipe"
     stmt = insert(recipe_table).values(name=recipe["name"], ingredients=recipe["ingredients"])
     with engine.connect() as conn:
         result = conn.execute(stmt)
