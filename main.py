@@ -1,6 +1,7 @@
 import os
 from typing import Union
 
+import uvicorn
 from dotenv import load_dotenv
 from fastapi import FastAPI
 from sqlalchemy import create_engine
@@ -44,3 +45,7 @@ def create_item(item: dict):
     db_session = get_db_session()
     db_session.add(item)
     db_session.commit()
+
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=8080, reload=True)
