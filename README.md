@@ -30,7 +30,7 @@ The main goal here is to:
     ingredients text[] NOT NULL
     );`
 
-### Create docker image (first point):
+### Create docker image (second point):
 - Create Dockerfile file with `New-Item -ItemType file -Name Dockerfile`(windows) or `touch Dockerfile` (linux)
 - Add instructions to Dockerfile as desired
 - Create docker image by running `docker build -t test-app-image .`
