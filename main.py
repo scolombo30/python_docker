@@ -1,6 +1,5 @@
 import os
 from typing import Union
-from uuid import uuid1
 
 import uvicorn
 from dotenv import load_dotenv
