@@ -1,11 +1,12 @@
 import os
 from typing import Union
+from uuid import uuid1
 
 import uvicorn
 from dotenv import load_dotenv
 from fastapi import FastAPI
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy import create_engine, Table, Column, Integer, String, MetaData, ARRAY
+from sqlalchemy import insert
 
 load_dotenv()
 
@@ -15,16 +16,21 @@ host = os.environ.get("POSTGRES_HOST")
 port = 5432
 database = os.environ.get("POSTGRES_DB")
 
-
-def get_db_session():
-    engine = create_engine(
-        url="postgresql://{0}:{1}@{2}:{3}/{4}".format(
-            user, password, host, port, database
-        )
+engine = create_engine(
+    url="postgresql://{0}:{1}@{2}:{3}/{4}".format(
+        user, password, host, port, database
     )
-    Session = sessionmaker(bind=engine)
-    return Session()
+)
 
+metadata = MetaData()
+
+recipe_table = Table(
+    "recipe",
+    metadata,
+    Column("id", Integer, primary_key=True, autoincrement=True),
+    Column("name", String),
+    Column("ingredients", ARRAY(String))
+)
 
 app = FastAPI()
 
@@ -41,10 +47,13 @@ def read_item(item_id: int, q: Union[str, None] = None):
 
 # method used to create an item and save it to the database
 @app.post("/items")
-def create_item(item: dict):
-    db_session = get_db_session()
-    db_session.add(item)
-    db_session.commit()
+def create_item(recipe: dict):
+    user_table = "recipe"
+    stmt = insert(recipe_table).values(name=recipe["name"], ingredients=recipe["ingredients"])
+    with engine.connect() as conn:
+        result = conn.execute(stmt)
+        conn.commit()
+        return {"id": result.inserted_primary_key[0], "name": recipe["name"], "ingredients": recipe["ingredients"]}
 
 
 if __name__ == "__main__":
