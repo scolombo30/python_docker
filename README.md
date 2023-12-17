@@ -36,3 +36,15 @@ The main goal here is to:
 - Create docker image by running `docker build -t test-app-image .`
 - Create json file with environment variables for docker image with `New-Item -ItemType file -Name env.json`(windows) or `touch env.json` (linux)
 - Run the container `docker run -p 8080:8080 --name test-app -d --env-file env.json test-app-image`
+
+### Create compose.yml file (third point):
+- Create compose.yml file with `New-Item -ItemType file -Name docker-compose.yml`(windows) or `touch docker-compose.yml` (linux)
+- Add instructions to compose.yml as desired
+- Create secret file with `New-Item -ItemType file -Name secrets.yml`(windows) or `touch secrets.yml` (linux)
+- Add in secrets.yml values for:
+  - POSTGRES_USER
+  - POSTGRES_PASSWORD
+  - POSTGRES_DB
+  - POSTGRES_HOST
+- Run with `docker-compose --env-file ./secrets.yml up -d`
+- To stop run `docker-compose down`
