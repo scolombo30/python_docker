@@ -47,12 +47,17 @@ def read_item(item_id: int, q: Union[str, None] = None):
 # method used to create an item and save it to the database
 @app.post("/items")
 def create_item(recipe: dict):
-    user_table = "recipe"
+    check_and_create_recipe_table()
     stmt = insert(recipe_table).values(name=recipe["name"], ingredients=recipe["ingredients"])
     with engine.connect() as conn:
         result = conn.execute(stmt)
         conn.commit()
         return {"id": result.inserted_primary_key[0], "name": recipe["name"], "ingredients": recipe["ingredients"]}
+
+
+def check_and_create_recipe_table():
+    if not engine.dialect.has_table(engine.connect(), "recipe"):
+        metadata.create_all(engine)
 
 
 if __name__ == "__main__":
