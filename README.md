@@ -34,5 +34,7 @@ The main goal here is to:
 - Create Dockerfile file with `New-Item -ItemType file -Name Dockerfile`(windows) or `touch Dockerfile` (linux)
 - Add instructions to Dockerfile as desired
 - Create docker image by running `docker build -t test-app-image .`
-- Create json file with environment variables for docker image with `New-Item -ItemType file -Name .env`(windows) or `touch .env` (linux)
-- Run the container `docker run -p 8080:8080 --name test-app -d --env-file .env test-app-image`
+- Create env file with environment variables for docker image with `New-Item -ItemType file -Name .env`(windows) or `touch .env` (linux)
+- Create docker network with `docker network create test-app-net`
+- Connect db to docker network with `docker network connect test-app-net test-db`
+- Run the container and connect the network with `docker run -d --name test-app --network test-app-net -p 8080:8080 --env-file .env test-app-image`
