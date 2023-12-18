@@ -1,0 +1,6 @@
+.env
+.gitignore
+.idea
+venv
+secrets.yml
+docker-compose.yml
