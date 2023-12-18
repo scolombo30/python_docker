@@ -34,5 +34,5 @@ The main goal here is to:
 - Create Dockerfile file with `New-Item -ItemType file -Name Dockerfile`(windows) or `touch Dockerfile` (linux)
 - Add instructions to Dockerfile as desired
 - Create docker image by running `docker build -t test-app-image .`
-- Create json file with environment variables for docker image with `New-Item -ItemType file -Name env.json`(windows) or `touch env.json` (linux)
-- Run the container `docker run -p 8080:8080 --name test-app -d --env-file env.json test-app-image`
+- Create json file with environment variables for docker image with `New-Item -ItemType file -Name .env`(windows) or `touch .env` (linux)
+- Run the container `docker run -p 8080:8080 --name test-app -d --env-file .env test-app-image`
