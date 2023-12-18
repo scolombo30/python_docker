@@ -14,10 +14,10 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # Add environment variables
-ENV POSTGRES_USER user
-ENV POSTGRES_PASSWORD password
-ENV POSTGRES_DB db
-ENV POSTGRES_HOST host
+ENV POSTGRES_USER $POSTGRES_USER
+ENV POSTGRES_PASSWORD $POSTGRES_PASSWORD
+ENV POSTGRES_DB $POSTGRES_DB
+ENV POSTGRES_HOST $POSTGRES_HOST
 
 # Expose the port on which the application will run
 EXPOSE 8080

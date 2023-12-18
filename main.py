@@ -45,7 +45,7 @@ def read_item(item_id: int, q: Union[str, None] = None):
 
 
 # method used to create an item and save it to the database
-@app.post("/items")
+@app.post("/recipes")
 def create_item(recipe: dict):
     check_and_create_recipe_table()
     stmt = insert(recipe_table).values(name=recipe["name"], ingredients=recipe["ingredients"])
@@ -53,6 +53,34 @@ def create_item(recipe: dict):
         result = conn.execute(stmt)
         conn.commit()
         return {"id": result.inserted_primary_key[0], "name": recipe["name"], "ingredients": recipe["ingredients"]}
+
+
+@app.get("/recipes")
+def get_recipes():
+    with engine.connect() as conn:
+        result = conn.execute(recipe_table.select())
+    return [
+        {"id": row[0], "name": row[1], "ingredients": row[2]}
+        for row in result
+    ]
+
+
+@app.get("/recipes/{id}")
+def get_recipe_by_id(id: int):
+    with engine.connect() as conn:
+        result = conn.execute(recipe_table.select().where(recipe_table.c.id == id))
+    return [
+        {"id": row[0], "name": row[1], "ingredients": row[2]}
+        for row in result
+    ]
+
+
+@app.delete("/recipes/{id}")
+def delete_recipe(id: int):
+    with engine.connect() as conn:
+        result = conn.execute(recipe_table.delete().where(recipe_table.c.id == id))
+    conn.commit()
+    return {"id": id}
 
 
 def check_and_create_recipe_table():
