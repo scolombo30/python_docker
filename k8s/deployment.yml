@@ -1,4 +1,4 @@
-kind: PersistentVolume
+kind: PersistentVolume #Piece of storage in the cluster
 apiVersion: v1
 metadata:
   name: postgres-pv-volume
@@ -8,13 +8,13 @@ metadata:
 spec:
   storageClassName: manual
   capacity:
-    storage: 5Gi
+    storage: 5Gi #Size of the storage
   accessModes:
     - ReadWriteMany
   hostPath:
-    path: "/mnt/data"
+    path: "/mnt/data" #Path on the host nod's filesystem
 ---
-kind: PersistentVolumeClaim
+kind: PersistentVolumeClaim #Request for storage in the cluster
 apiVersion: v1
 metadata:
   name: postgres-pv-claim
@@ -29,11 +29,11 @@ spec:
       storage: 5Gi
 ---
 apiVersion: apps/v1
-kind: Deployment
+kind: Deployment #A Deployment manages a set of Pods
 metadata:
   name: postgres
 spec:
-  replicas: 1
+  replicas: 1 #Number of replicas
   selector:
     matchLabels:
       app: postgres
@@ -43,20 +43,20 @@ spec:
         app: postgres
     spec:
       containers:
-        - name: postgres
-          image: postgres
+        - name: postgres #Name of the container
+          image: postgres #Image of the container
           imagePullPolicy: "IfNotPresent"
           ports:
-            - containerPort: 5432
+            - containerPort: 5432 #Port to expose
           envFrom:
             - secretRef:
-                name: postgres-secrets
+                name: postgres-secrets #Load env variables from secret
           volumeMounts:
-            - mountPath: /var/lib/postgresql/data
+            - mountPath: /var/lib/postgresql/data #Path to mount the volume after request
               name: postgredb
       volumes:
         - name: postgredb
-          persistentVolumeClaim:
+          persistentVolumeClaim: #Request for storage in the cluster using the claim
             claimName: postgres-pv-claim
 ---
 apiVersion: apps/v1
