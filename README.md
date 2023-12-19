@@ -34,17 +34,23 @@ The main goal here is to:
 - Create Dockerfile file with `New-Item -ItemType file -Name Dockerfile`(windows) or `touch Dockerfile` (linux)
 - Add instructions to Dockerfile as desired
 - Create docker image by running `docker build -t test-app-image .`
-- Create env file with environment variables for docker image with `New-Item -ItemType file -Name env.json`(windows) or `touch env.json` (linux)
-- Run the container `docker run -p 8080:8080 --name test-app -d --env-file env.json test-app-image`
+- Create env file with environment variables for docker image with `New-Item -ItemType file -Name .env`(windows) or `touch .env` (linux)
+- Add in .env file values for:
+  - POSTGRES_USER
+  - POSTGRES_PASSWORD
+  - POSTGRES_DB
+  - POSTGRES_HOST (since we're using the network to connect to the db, don't use localhost, use the name of the db container)
+- Create docker network with `docker network create test-app-net`
+- Connect db to docker network with `docker network connect test-app-net test-db`
+- Run the container and connect the network with `docker run -d --name test-app --network test-app-net -p 8080:8080 --env-file .env test-app-image`
 
-### Create compose.yml file (third point):
-- Create compose.yml file with `New-Item -ItemType file -Name docker-compose.yml`(windows) or `touch docker-compose.yml` (linux)
-- Add instructions to compose.yml as desired
+### Create docker-compose.yml file (third point):
+- Create docker-compose.yml file with `New-Item -ItemType file -Name docker-compose.yml`(windows) or `touch docker-compose.yml` (linux)
+- Add instructions to docker-compose.yml as desired
 - Create env file with environment variables for docker image with `New-Item -ItemType file -Name env.json`(windows) or `touch env.json` (linux)
 - Add in secrets.yml values for:
   - POSTGRES_USER
   - POSTGRES_PASSWORD
   - POSTGRES_DB
-  - POSTGRES_HOST
 - Run with `docker-compose up -d`
 - To stop run `docker-compose down`
