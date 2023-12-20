@@ -4,7 +4,7 @@ from typing import Union
 import uvicorn
 from dotenv import load_dotenv
 from fastapi import FastAPI
-from sqlalchemy import create_engine, Table, Column, Integer, String, MetaData, ARRAY
+from sqlalchemy import create_engine, Table, Column, Integer, String, MetaData, ARRAY, delete
 from sqlalchemy import insert
 
 load_dotenv()
