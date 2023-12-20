@@ -4,7 +4,7 @@ from typing import Union
 import uvicorn
 from dotenv import load_dotenv
 from fastapi import FastAPI
-from sqlalchemy import create_engine, Table, Column, Integer, String, MetaData, ARRAY
+from sqlalchemy import create_engine, Table, Column, Integer, String, MetaData, ARRAY, delete
 from sqlalchemy import insert
 
 load_dotenv()
@@ -77,9 +77,10 @@ def get_recipe_by_id(id: int):
 
 @app.delete("/recipes/{id}")
 def delete_recipe(id: int):
+    sql = delete(recipe_table).where(recipe_table.columns.id == id)
     with engine.connect() as conn:
-        result = conn.execute(recipe_table.delete().where(recipe_table.c.id == id))
-    conn.commit()
+        conn.execute(sql)
+        conn.commit()
     return {"id": id}
 
 
