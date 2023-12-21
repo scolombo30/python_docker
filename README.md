@@ -43,7 +43,6 @@ The main goal here is to:
 - Create docker network with `docker network create test-app-net`
 - Connect db to docker network with `docker network connect test-app-net test-db`
 - Run the container and connect the network with `docker run -d --name test-app --network test-app-net -p 8080:8080 --env-file .env test-app-image`
-
 ### Create docker-compose.yml file (third point):
 - Create docker-compose.yml file with `New-Item -ItemType file -Name docker-compose.yml`(windows) or `touch docker-compose.yml` (linux)
 - Add instructions to docker-compose.yml as desired
@@ -68,8 +67,49 @@ The main goal here is to:
 - Create deployment.yml file where define app deployment with `New-Item -ItemType file -Name deployment.yml`(windows) or `touch deployment.yml` (linux)
 - Create service.yml file where define app service with `New-Item -ItemType file -Name service.yml`(windows) or `touch service.yml
 - Apply changes for secrets with `kubectl apply -f config-secrets.yml`
-- Before applying changes for app load into minikube your image with: `minikube image load <image_name>` (if error 'Unable to resolve the current Docker CLI context "default"' run `docker context use default`))
+- Before applying changes for app load into minikube your image with: `minikube image load <image_name>` (if error 'Unable to resolve the current Docker CLI context "default" ' run `docker context use default`))
 - Apply changes for app with `kubectl apply -f deployment.yml` 
 - Apply changes for service with `kubectl apply -f service.yml`
 - Forward app-test port with `kubectl port-forward service/test-app 8080:8080`. 
   Now you can test app with `curl http://localhost:8080` or view auto-generated doc at `http://localhost:8080/docs`
+- When you are done and want to stop the cluster just run `minikube stop`
+#### Interact with the cluster(bonus point)
+- To see a visual dashboard of the status of the cluster use `minikube dashboard` (if you see an error about metric-server addon run `minikube addons enable metrics-server` and then the first one)
+- All the things you see in the dashboard can be seen also from the terminal:
+  - To get namespaces `kubectl get namespaces`
+  - To get pods `kubectl get pods -n <namespace_name>`
+  - To look at logs for a pod `kubectl log -f <pod_name> -n <namespace_name>` (with -f it means the terminal will keep printing new logs)
+  - To take a look at a pod `kubectl describe pod <pod_name> -n <namespace_name>`
+- For a more comprehensive list, check out [this cheatsheet](https://kubernetes.io/docs/reference/kubectl/quick-reference/)
+  (Enable support to PlantUML to see the diagram correctly)
+```plantuml
+left to right direction
+actor User as u
+actor Kubectl as k
+package Ingress{
+  usecase "Receive connection" as conn
+}
+u --> conn
+package Cluster{
+  package Working-Node{
+    package Pod-1-app{
+      usecase "Execute request" as r
+    }
+    package Pod-2-db{
+      usecase "Search in db" as s
+    }
+  }
+  package Control-Plane{
+    package etcd{
+    }
+    package api-server{
+      usecase "Handle command" as ac
+    }
+    package scheduler{
+    }
+  }
+}
+conn --> r
+r --> s
+k --> ac
+```
